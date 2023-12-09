@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Basic Chat";
+}
+
+<div class="container" style="margin-top: 10px;">
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-3">Sender</div>
+        <div class="col-4"><input value="@User.Identity!.Name" type="text" id="senderEmail" /></div>
+    </div>
+    <div class="row">
+        <div class="col-3">Receiver</div>
+        <div class="col-4"><input type="text" id="receiverEmail" /></div>
+    </div>
+    <div class="row">
+        <div class="col-3">Message</div>
+        <div class="col-4"><input type="text" id="chatMessage" /></div>
+    </div>
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-6">
+            <input type="button" id="sendMessage" value="Send Message" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/signalr.js"></script>
+<script src="~/js/chatHub.js"></script>

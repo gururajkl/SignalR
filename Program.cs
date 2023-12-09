@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SignalRSample;
@@ -51,5 +50,6 @@ app.MapHub<UserHub>("/hubs/userCount");
 app.MapHub<DeathlyHallowsHub>("/hubs/deathlyHallow");
 app.MapHub<HouseGroupHub>("/hubs/houseGroupHub");
 app.MapHub<NotificationHub>("/hubs/notificationHub");
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

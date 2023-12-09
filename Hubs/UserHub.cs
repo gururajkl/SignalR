@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.VisualStudio.TextTemplating;
 
 namespace SignalRSample.Hubs
 {
