@@ -20,7 +20,7 @@
 
             return false;
         }
-        
+
         public static bool HasUser(string UserId)
         {
             try
