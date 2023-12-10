@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SignalRSample.Data;
 using SignalRSample.Hubs;
 using SignalRSample.Models;
+using SignalRSample.Models.ViewModels;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace SignalRSample.Controllers
 {
@@ -63,6 +66,21 @@ namespace SignalRSample.Controllers
             return View();
         }
 
+        [Authorize]
+        public IActionResult Chat()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            ChatViewModel chatViewModel = new()
+            {
+                MaxRoomAllowed = 4,
+                UserId = userId,
+                Rooms = _context.ChatRooms.ToList()
+            };
+
+            return View(chatViewModel);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -71,7 +89,7 @@ namespace SignalRSample.Controllers
 
         // Orders Methods.
         [ActionName("Order")]
-        public async Task<IActionResult> Order()
+        public IActionResult Order()
         {
             string[] name = { "Bhrugen", "Ben", "Jess", "Laura", "Ron" };
             string[] itemName = { "Food1", "Food2", "Food3", "Food4", "Food5" };
@@ -101,7 +119,7 @@ namespace SignalRSample.Controllers
         }
 
         [ActionName("OrderList")]
-        public async Task<IActionResult> OrderList()
+        public IActionResult OrderList()
         {
             return View();
         }
