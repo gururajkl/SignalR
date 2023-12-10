@@ -62,7 +62,7 @@ namespace SignalRSample.Hubs
 
             await Clients.All.SendAsync("receiveAddRoomMessage", maxRoom, roomId, roomName, userId, userName);
         }
-        
+
         public async Task SendDeleteRoomMessage(int deleted, int selected, string roomName)
         {
             var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -71,22 +71,22 @@ namespace SignalRSample.Hubs
             await Clients.All.SendAsync("receiveDeleteRoomMessage", deleted, selected, roomName, userName);
         }
 
-        /*
-        public async Task SendMessageToAll(string user, string message)
+        public async Task SendPublicMessage(int roomId, string message, string roomName)
         {
-            await Clients.All.SendAsync("messageReceived", user, message);
+            var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = applicationDb.Users.FirstOrDefault(u => u.Id == userId)!.UserName;
+
+            await Clients.All.SendAsync("receivePublicMessage", roomId, userId, userName, message, roomName);
         }
 
-        [Authorize]
-        public async Task SendMessageToReceiver(string sender, string receiver, string message)
+        public async Task SendPrivateMessage(string receiverId, string message, string receiverName)
         {
-            var userId = applicationDb.Users.FirstOrDefault(u => u.Email!.ToLower() == receiver.ToLower())!.Id;
+            var senderId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
+            var senderName = applicationDb.Users.FirstOrDefault(u => u.Id == senderId)!.UserName;
 
-            if (userId != null)
-            {
-                await Clients.User(userId).SendAsync("messageReceived", sender, message);
-            }
+            var users = new string[] { senderId!, receiverId };
+
+            await Clients.Users(users).SendAsync("receivePrivateMessage", senderId, senderName, receiverId, message, Guid.NewGuid(), receiverName);
         }
-        */
     }
 }

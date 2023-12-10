@@ -18,6 +18,15 @@ hubConnection.on("receiveDeleteRoomMessage", (maxRoom, roomId, roomName, userId,
     fillRoomDropDown();
 });
 
+hubConnection.on("receivePublicMessage", (roomId, userId, userName, message, roomName) => {
+    addMessage(`[Public Message - ${roomName}]${userId} says ${message}`);
+    fillRoomDropDown();
+});
+
+connection.on("receivePrivateMessage", function (senderId, senderName, receiverId, message, chatId, receiverName) {
+    addMessage(`[Private Message to ${receiverName} ]${senderName} says ${message}`);
+});
+
 function deleteRoom() {
     let ddlDeleteRoom = document.getElementById('ddlDelRoom');
 
@@ -151,6 +160,30 @@ function addMessage(message) {
     var li = document.createElement("li");
     li.innerHTML = message;
     ui.appendChild(li);
+}
+
+function sendPublicMessage() {
+    let inputMsg = document.getElementById('txtPublicMessage');
+    let ddlSelRoom = document.getElementById('ddlSelRoom');
+
+    let roomId = ddlSelRoom.value;
+    let roomName = ddlSelRoom.options[ddlSelRoom.selectedIndex].text;
+    var message = inputMsg.value;
+
+    hubConnection.send("SendPublicMessage", Number(roomId), message, roomName);
+    inputMsg.value = '';
+}
+
+function sendPrivateMessage() {
+    let inputMsg = document.getElementById('txtPrivateMessage');
+    let ddlSelUser = document.getElementById('ddlSelUser');
+
+    let receiverId = ddlSelUser.value;
+    let receiverName = ddlSelUser.options[ddlSelUser.selectedIndex].text;
+    var message = inputMsg.value;
+
+    connection.send("SendPrivateMessage", receiverId, message, receiverName);
+    inputMsg.value = '';
 }
 
 hubConnection.start();
