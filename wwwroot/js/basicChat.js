@@ -1,4 +1,4 @@
-﻿var hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs/chat").build();
+﻿var hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs/basicChat").build();
 
 document.getElementById("sendMessage").disabled = true;
 
