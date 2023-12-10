@@ -22,9 +22,53 @@ namespace SignalRSample.Hubs
             {
                 var userName = applicationDb.Users.FirstOrDefault(u => u.Id == userId)!.UserName;
                 Clients.Users(HubConnections.OnlineUsers()).SendAsync("receiveUserConnected", userId, userName);
+
                 HubConnections.AddUserConnection(userId, Context.ConnectionId);
             }
             return base.OnConnectedAsync();
+        }
+
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (HubConnections.HasUserConnection(userId!, Context.ConnectionId))
+            {
+                var userConnections = HubConnections.Users[userId!];
+                userConnections.Remove(Context.ConnectionId);
+
+                HubConnections.Users.Remove(userId!);
+                if (userConnections.Any())
+                {
+                    HubConnections.Users.Add(userId!, userConnections);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var userName = applicationDb.Users.FirstOrDefault(u => u.Id == userId)!.UserName;
+                Clients.Users(HubConnections.OnlineUsers()).SendAsync("receiveUserDisconnected", userId, userName);
+
+                HubConnections.AddUserConnection(userId, Context.ConnectionId);
+            }
+
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task SendAddRoomMessage(int maxRoom, int roomId, string roomName)
+        {
+            var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = applicationDb.Users.FirstOrDefault(u => u.Id == userId)!.UserName;
+
+            await Clients.All.SendAsync("receiveAddRoomMessage", maxRoom, roomId, roomName, userId, userName);
+        }
+        
+        public async Task SendDeleteRoomMessage(int deleted, int selected, string roomName)
+        {
+            var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = applicationDb.Users.FirstOrDefault(u => u.Id == userId)!.UserName;
+
+            await Clients.All.SendAsync("receiveDeleteRoomMessage", deleted, selected, roomName, userName);
         }
 
         /*

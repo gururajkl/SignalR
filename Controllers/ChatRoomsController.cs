@@ -24,7 +24,8 @@ namespace SignalRSample.Controllers
 
         // GET: /ChatRooms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ChatRoom>>> GetChatRooms()
+        [Route("/[controller]/GetChatRoom")]
+        public async Task<ActionResult<IEnumerable<ChatRoom>>> GetChatRoom()
         {
             if (_context.ChatRooms == null)
             {
@@ -33,14 +34,14 @@ namespace SignalRSample.Controllers
             return await _context.ChatRooms.ToListAsync();
         }
 
-
         // POST: /ChatRooms
         [HttpPost]
+        [Route("/[controller]/PostChatRoom")]
         public async Task<ActionResult<ChatRoom>> PostChatRoom(ChatRoom chatRoom)
         {
             if (_context.ChatRooms == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.ChatRooms'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.ChatRooms' is null.");
             }
             _context.ChatRooms.Add(chatRoom);
             await _context.SaveChangesAsync();
@@ -50,6 +51,7 @@ namespace SignalRSample.Controllers
 
         // DELETE: /ChatRooms/5
         [HttpDelete("{id}")]
+        [Route("/[controller]/DeleteChatRoom/{id}")]
         public async Task<IActionResult> DeleteChatRoom(int id)
         {
             if (_context.ChatRooms == null)
@@ -65,10 +67,13 @@ namespace SignalRSample.Controllers
             _context.ChatRooms.Remove(chatRoom);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            var room = await _context.ChatRooms.FirstOrDefaultAsync();
+
+            return Ok(new { deleted = id, selected = (room == null ? 0 : room.Id) });
         }
 
         [HttpGet]
+        [Route("/[controller]/GetChatUser")]
         public async Task<ActionResult<object>> GetChatUser()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
